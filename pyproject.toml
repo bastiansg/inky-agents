@@ -27,3 +27,6 @@ include = ["inky_agents*"]
 dependencies = { file = ["requirements.txt"] }
 
 [tool.setuptools_scm]
+
+[tool.setuptools.package-data]
+"inky_agents" = ["llm_agents/**/*.md"]
