@@ -1,0 +1,25 @@
+services:
+    inky-agents-devcontainer:
+        image: inky-agents-devcontainer
+        container_name: inky-agents-devcontainer
+        build:
+            context: ..
+            dockerfile: .devcontainer/Dockerfile
+        volumes:
+            - ..:/workspace:cached
+            - ../resources:/resources
+        devices:
+            - /dev/i2c-1
+            - /dev/spidev0.0
+        privileged: true
+        env_file:
+            - ../.env
+        # This keeps the devcontainer running.
+        entrypoint: ["tail", "-f", "/dev/null"]
+        networks:
+            - inky-agents
+
+networks:
+    inky-agents:
+        name: inky-agents
+        driver: bridge

@@ -1,0 +1,33 @@
+services:
+    inky-agents-core:
+        image: inky-agents-core
+        container_name: inky-agents-core
+        build:
+            context: .
+            dockerfile: ./docker/core/Dockerfile
+        env_file:
+            - .env
+        privileged: true
+        networks:
+            - inky-agents
+
+    # por-app:
+    #     image: por-app
+    #     container_name: por-app
+    #     build:
+    #         context: .
+    #         dockerfile: ./docker/app/Dockerfile
+    #     volumes:
+    #         - $PWD/resources:/resources
+    #         - /run/udev:/run/udev:ro
+    #     env_file:
+    #         - .env
+    #     privileged: true
+    #     restart: unless-stopped
+    #     networks:
+    #         - por
+
+networks:
+    inky-agents:
+        name: inky-agents
+        driver: bridge

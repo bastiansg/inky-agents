@@ -1,0 +1,6 @@
+[pip]
+torch-backend = "cpu"
+find-links = [
+    "https://github.com/bastiansg/inky-dsp/releases/expanded_assets/index",
+    "https://github.com/aureka-team/llm-agents/releases/expanded_assets/index",
+]

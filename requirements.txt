@@ -1,0 +1,2 @@
+inky-dsp==1.1.1
+llm_agents==2.0.8
