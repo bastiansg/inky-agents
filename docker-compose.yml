@@ -11,21 +11,35 @@ services:
         networks:
             - inky-agents
 
-    # por-app:
-    #     image: por-app
-    #     container_name: por-app
-    #     build:
-    #         context: .
-    #         dockerfile: ./docker/app/Dockerfile
-    #     volumes:
-    #         - $PWD/resources:/resources
-    #         - /run/udev:/run/udev:ro
-    #     env_file:
-    #         - .env
-    #     privileged: true
-    #     restart: unless-stopped
-    #     networks:
-    #         - por
+    inky-agents-app:
+        image: inky-agents-app
+        container_name: inky-agents-app
+        build:
+            context: .
+            dockerfile: ./docker/app/Dockerfile
+        volumes:
+            - $PWD/resources:/resources
+            - /run/udev:/run/udev:ro
+        env_file:
+            - .env
+        privileged: true
+        restart: unless-stopped
+        networks:
+            - inky-agents
+
+    inky-agents-mongo:
+        # Do not upgrade to MongoDB 8.x on this ARM64 host: its newer tcmalloc
+        # path crashes at startup with MmapAligned() / exit 133.
+        image: mongo:7.0.32
+        container_name: inky-agents-mongo
+        ports:
+            - "27017:27017"
+        command: ["mongod", "--wiredTigerCacheSizeGB", "0.25"]
+        volumes:
+            - $PWD/resources/db/mongo/db:/data/db:z
+        restart: unless-stopped
+        networks:
+            - inky-agents
 
 networks:
     inky-agents:
