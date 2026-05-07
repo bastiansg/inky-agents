@@ -1,8 +1,8 @@
 from pathlib import Path
 
 
+from pydantic import BaseModel, Field, StrictStr
 from pydantic_extra_types.language_code import LanguageName
-from pydantic import BaseModel, Field, StrictInt, StrictStr
 
 from pydantic_ai import Agent, RunContext, NativeOutput
 from pydantic_ai.capabilities import ReinjectSystemPrompt
@@ -13,27 +13,20 @@ from llm_agents.message_history import MongoDBMessageHistory
 
 
 class PresentQuestionerDeps(BaseModel):
-    n: StrictInt = Field(
-        default=5,
-        description="The number of alternative-present questions to generate.",
-        ge=1,
-    )
-
     output_language: LanguageName = Field(
         default="Spanish",
-        description="The language to use for the generated questions.",
+        description="The language to use for the generated question.",
     )
 
 
 class PresentQuestionerOutput(BaseModel):
-    questions: list[StrictStr] = Field(
-        description="Wildly creative questions about alternative presents.",
-        min_length=1,
+    question: StrictStr = Field(
+        description="A wildly creative question about alternative presents.",
     )
 
 
-agent = Agent(  # type: ignore
-    name="present-questioner",
+agent = Agent(
+    name="PresentQuestioner",
     model="gpt-5.4-2026-03-05",
     model_settings=OpenAIChatModelSettings(openai_reasoning_effort="none"),
     deps_type=PresentQuestionerDeps,

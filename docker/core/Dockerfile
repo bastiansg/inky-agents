@@ -17,6 +17,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
     htop \
     zsh \
     sudo \
+    libcairo2 \
     python${PYTHON_VERSION} \
     python${PYTHON_VERSION}-dev \
     python3-setuptools \

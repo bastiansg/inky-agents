@@ -48,6 +48,7 @@ The prompt you output must enforce:
 
 - Do not mention or explain the question or the input analysis.
 - Output only a direct, ready-to-use image-generation prompt with no labels, captions, or explanations.
+- Output the image-generation prompt in English.
 - The generated prompt **MUST** explicitly mention **ALL** `# Style Constraints`.
 
 # Context

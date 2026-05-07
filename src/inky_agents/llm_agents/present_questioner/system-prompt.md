@@ -30,8 +30,8 @@ Generate questions about alternative presents and alternative ways of human life
 
 # Hard Constraints
 
-- Output exactly {n} questions.
-- Output your questions in {output_language}.
+- Output exactly one question.
+- Output your question in {output_language}.
 - Each question must be one concise sentence.
 - Do not repeat or overlap with previous questions.
 - Address humanity, civilizations, societies, cultures, bodies, institutions, or worlds; never address a single person.
