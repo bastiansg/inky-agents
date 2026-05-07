@@ -1,15 +1,18 @@
 from pathlib import Path
 
-from pydantic_ai import Agent, RunContext, NativeOutput
+
 from pydantic_extra_types.language_code import LanguageName
 from pydantic import BaseModel, Field, StrictInt, StrictStr
+
+from pydantic_ai import Agent, RunContext, NativeOutput
+from pydantic_ai.capabilities import ReinjectSystemPrompt
 from pydantic_ai.models.openai import OpenAIChatModelSettings
 
 from llm_agents.meta.interfaces import LLMAgent
 from llm_agents.message_history import MongoDBMessageHistory
 
 
-class AlternativePresentQuestionerDeps(BaseModel):
+class PresentQuestionerDeps(BaseModel):
     n: StrictInt = Field(
         default=5,
         description="The number of alternative-present questions to generate.",
@@ -22,7 +25,7 @@ class AlternativePresentQuestionerDeps(BaseModel):
     )
 
 
-class AlternativePresentQuestionerOutput(BaseModel):
+class PresentQuestionerOutput(BaseModel):
     questions: list[StrictStr] = Field(
         description="Wildly creative questions about alternative presents.",
         min_length=1,
@@ -30,18 +33,19 @@ class AlternativePresentQuestionerOutput(BaseModel):
 
 
 agent = Agent(  # type: ignore
-    name="alternative-present-questioner",
+    name="present-questioner",
     model="gpt-5.4-2026-03-05",
     model_settings=OpenAIChatModelSettings(openai_reasoning_effort="none"),
-    deps_type=AlternativePresentQuestionerDeps,
-    output_type=NativeOutput(AlternativePresentQuestionerOutput),
-    retries=3,
+    deps_type=PresentQuestionerDeps,
+    output_type=NativeOutput(PresentQuestionerOutput),
+    retries=10,
+    capabilities=[ReinjectSystemPrompt()],
 )
 
 
 @agent.system_prompt
 async def get_system_prompt(
-    ctx: RunContext[AlternativePresentQuestionerDeps],
+    ctx: RunContext[PresentQuestionerDeps],
 ) -> str:
     system_prompt = LLMAgent.read_file(
         file_path=str(Path(__file__).with_name("system-prompt.md"))
@@ -50,10 +54,8 @@ async def get_system_prompt(
     return system_prompt.format(**ctx.deps.model_dump())
 
 
-class AlternativePresentQuestioner(
-    LLMAgent[
-        AlternativePresentQuestionerDeps, AlternativePresentQuestionerOutput
-    ]
+class PresentQuestioner(
+    LLMAgent[PresentQuestionerDeps, PresentQuestionerOutput]
 ):
     def __init__(
         self,

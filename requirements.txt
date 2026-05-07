@@ -1,2 +1,2 @@
 inky-dsp==1.1.3
-llm_agents==2.0.8
+llm_agents==2.0.10
