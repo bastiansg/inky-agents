@@ -4,8 +4,7 @@ import cairosvg
 import replicate
 
 from PIL import Image
-from uuid import uuid4
-from datetime import date
+from datetime import datetime
 
 from functools import lru_cache
 from rich.console import Console
@@ -55,14 +54,17 @@ async def other_presents_pipline():
         ),
     )
 
+    console.log(pq_output)
     question = pq_output.question
-    console.print(question)
 
     ip = get_image_prompter()
     ip_output = await ip.generate(
         user_prompt="Provide your surreal image-generation prompt.",
         agent_deps=ImagePrompterDeps(question=question),
     )
+
+    console.log(ip_output)
+    console.log("running replicate.")
 
     image_generation_prompt = ip_output.flux_prompt
     rep_output = replicate.run(
@@ -73,11 +75,15 @@ async def other_presents_pipline():
         },
     )
 
+    console.log("running drawing.")
     svg_bytes = rep_output.read()
     png_bytes = cairosvg.svg2png(bytestring=svg_bytes)
-    image = Image.open(io.BytesIO(png_bytes)).convert("RGB")
+    # image = Image.open(io.BytesIO(png_bytes)).convert("RGB")
+    image = Image.open(io.BytesIO(png_bytes)).convert("L")
+    image = image.point(lambda p: 255 if p >= 250 else p)
+    image = image.point(lambda p: 0 if p <= 200 else p)
 
-    gen_image_path = f"{OUT_PATH}/{date.today().isoformat()}-{uuid4()}.jpg"
+    gen_image_path = f"{OUT_PATH}/{datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')}.jpg"
     image.save(gen_image_path)
 
     display_image(file_path=gen_image_path)
