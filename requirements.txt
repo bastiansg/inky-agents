@@ -1,5 +1,5 @@
 cairosvg==2.9.0
 replicate==1.0.7
 
-inky-dsp==1.1.3
+inky-dsp==1.1.4
 llm_agents==2.0.12

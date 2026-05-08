@@ -44,6 +44,10 @@ def get_image_prompter() -> ImagePrompter:
     return ImagePrompter()
 
 
+def get_image_path(out_path: str) -> str:
+    return f"{out_path}/{datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')}.jpg"
+
+
 async def other_presents_pipline():
 
     pq = get_present_questioner()
@@ -78,12 +82,13 @@ async def other_presents_pipline():
     console.log("running drawing.")
     svg_bytes = rep_output.read()
     png_bytes = cairosvg.svg2png(bytestring=svg_bytes)
-    # image = Image.open(io.BytesIO(png_bytes)).convert("RGB")
-    image = Image.open(io.BytesIO(png_bytes)).convert("L")
+    image = Image.open(io.BytesIO(png_bytes)).convert("RGB")
+
+    image_path = get_image_path(out_path=OUT_PATH)
+    image.save(image_path)
+
+    image = image.convert("L")
     image = image.point(lambda p: 255 if p >= 250 else p)
     image = image.point(lambda p: 0 if p <= 200 else p)
 
-    gen_image_path = f"{OUT_PATH}/{datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')}.jpg"
-    image.save(gen_image_path)
-
-    display_image(file_path=gen_image_path)
+    display_image(image=image)
